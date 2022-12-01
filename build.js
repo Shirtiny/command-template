@@ -52,8 +52,26 @@ const CommandVariants = {
     start: "@SH-Style",
     end: 0,
     execute(lines) {
+      const styleTemplate = `<style type="text/css">/* CSS_CONTENT */</style>`;
       return this.scopeExec(lines, (lines, lineStart, lineEnd) => {
-        return pullRange(lines, lineStart, lineEnd);
+        const stylePath = String(lines[lineStart]).match(
+          new RegExp(`${this.start} (.+) `)
+        )[1];
+        if (!stylePath) return;
+        const clone = lines.map((l) => l);
+        const content = stylePath.endsWith("scss")
+          ? sass.compile(path.resolve(__dirname, stylePath), {
+              style: "compressed",
+            }).css
+          : fs.readFileSync(path.resolve(__dirname, stylePath), {
+              encoding: "utf-8",
+            });
+        clone.splice(
+          lineStart,
+          lineEnd - lineStart + 1,
+          ...styleTemplate.split(`/* CSS_CONTENT */`).join(content).split("\n")
+        );
+        return clone;
       });
     },
   },
@@ -62,33 +80,34 @@ Object.keys(CommandVariants).forEach((key) => {
   const that = CommandVariants[key];
   const scopeExec = (lines, cb) => {
     const [lineStart, lineEnd] = commandRange(lines, that.start, that.end);
-    if (lineStart >= lineEnd) return lines;
-    return scopeExec(cb(lines, lineStart, lineEnd), cb);
+    if (lineStart > lineEnd || lineStart < 0) return lines;
+    const result = cb(lines, lineStart, lineEnd);
+    if (!result) return lines;
+    return scopeExec(result, cb);
   };
   that.scopeExec = scopeExec;
 });
 
-const compressed = sass.compile(path.resolve(__dirname, "./index.scss"), {
-  style: "compressed",
-}); //?.
+const run = () => {
+  const htmlTemplate = fs.readFileSync(
+    path.resolve(__dirname, "./index.html"),
+    {
+      encoding: "utf-8",
+    }
+  ); //?.
 
-const css = compressed.css;
+  const commands = Object.keys(COMMANDS).map(
+    (key) => CommandVariants[COMMANDS[key]]
+  ); //?
 
-const htmlTemplate = fs.readFileSync(path.resolve(__dirname, "./index.html"), {
-  encoding: "utf-8",
-}); //?.
+  const output = commands
+    .reduce((result, command) => {
+      if (!command.execute) return result;
+      return command.execute(result) || result;
+    }, String(htmlTemplate).split("\r\n"))
+    .join("\r\n");
 
-const commands = Object.keys(COMMANDS).map(
-  (key) => CommandVariants[COMMANDS[key]]
-); //?
+  fs.writeFileSync("./output.html", output, { encoding: "utf-8" });
+};
 
-const output = commands
-  .reduce((result, command) => {
-    if (!command.execute) return result;
-    return command.execute(result) || result;
-  }, String(htmlTemplate).split("\r\n"))
-  .join("\r\n");
-
-output;
-
-// console.log({ css, htmlTemplate });
+run();
