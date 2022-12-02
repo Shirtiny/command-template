@@ -7,7 +7,7 @@
     "sass": "^1.56.1"
   },
   "scripts": {
-    "start": "sass --watch index.scss output.css",
+    "start": "sass --watch dev.scss ./temp/dev.css",
     "build": "node build.js"
   }
 }
