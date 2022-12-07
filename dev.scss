@@ -62,7 +62,7 @@ body {
         &.link {
           cursor: pointer;
           position: relative;
-          color: #3a3a3a;
+          color: #0077cc;
           text-decoration: none;
           &::after {
             content: "";
@@ -71,7 +71,7 @@ body {
             bottom: -1px;
             height: 1px;
             width: 100%;
-            background-color: #222222;
+            background-color: #0077cc;
           }
         }
       }
@@ -143,6 +143,13 @@ body {
             line-height: 20px;
             &:nth-child(2) {
               text-align: left;
+              & > table {
+                tr {
+                  td {
+                    text-align: left;
+                  }
+                }
+              }
             }
 
             @media (max-width: 720px) {
@@ -150,6 +157,9 @@ body {
               &:nth-child(2) {
                 min-width: 250px;
               }
+            }
+            & > table {
+              width: 100%;
             }
           }
         }
