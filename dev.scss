@@ -17,7 +17,6 @@ body {
   font-family: Gotham SSm A, Gotham SSm B, Arial;
   font-size: 16px;
   line-height: 19px;
-  padding: 50px 80px;
 
   @media (max-width: 720px) {
     padding: 50px 32px;
@@ -79,12 +78,14 @@ body {
   }
 
   &__info-list {
+    padding-bottom: 24px;
     ul {
       list-style: none;
       margin: 0;
       margin-block: 0;
       margin-inline: 0;
       padding-inline: 0;
+      padding-inline-start: 0;
       li {
         color: #222222;
         &:not(:last-child) {
@@ -136,18 +137,15 @@ body {
           }
           td {
             text-align: center;
-            padding: 40px;
             font-size: 14px;
             font-weight: normal;
             color: #3a3a3a;
             line-height: 20px;
-            &:nth-child(2) {
-              text-align: left;
-              & > table {
-                tr {
-                  td {
-                    text-align: left;
-                  }
+            & > table {
+              tr {
+                td {
+                  padding: 16px;
+                  text-align: center;
                 }
               }
             }
