@@ -25,10 +25,10 @@ const getNowFormatDate = () => {
 
 const now = getNowFormatDate()//?
 
-const html = fs.readFileSync('./postdrop.html', 'utf8');
+const html = fs.readFileSync('./postdrop_images.html', 'utf8');
 
 const result = compressHtml(html);//?
 
 
 // write result to file
-fs.writeFileSync(`./postdrop.min.txt`, result, 'utf8');
+fs.writeFileSync(`./postdrop_images.min.txt`, result, 'utf8');
